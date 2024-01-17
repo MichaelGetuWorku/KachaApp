@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/auth/fire_auth.dart';
+import 'package:kacha/screens/profile_screen.dart';
 
 class LoginFormComponent extends StatefulWidget {
   const LoginFormComponent({super.key});
@@ -22,6 +25,23 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
         errorMessage2 = message;
       }
     });
+  }
+
+  void tryLoggingIn() async {
+    if (_formKey.currentState!.validate()) {
+      User? user = await FireAuth.signInUsingEmailPassword(
+        email: userInput,
+        password: password,
+        context: context,
+      );
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(user: user),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -206,11 +226,11 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
           ),
         );
       } else {
-        _formKey.currentState!.reset();
+        // _formKey.currentState!.reset();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              // onVisible: tryLoggingIn,
-              content: Text('Processing...'),
+          SnackBar(
+              onVisible: tryLoggingIn,
+              content: const Text('Processing...'),
               backgroundColor: Colors.blue),
         );
       }

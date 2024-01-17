@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/auth/fire_auth.dart';
 import 'package:kacha/component/sign_up_screen/step_get_bank_account.dart';
 import 'package:kacha/component/sign_up_screen/step_get_email_password.dart';
 import 'package:kacha/component/sign_up_screen/step_get_name_address.dart';
+import 'package:kacha/screens/profile_screen.dart';
 
 class SignUpSteps extends StatefulWidget {
   const SignUpSteps({Key? key}) : super(key: key);
@@ -167,7 +170,8 @@ class _SignUpStepsState extends State<SignUpSteps> {
                         ),
                         TextSpan(
                             text: 'End User License Agreement',
-                            style: const TextStyle(fontSize: 14, color: Colors.blue),
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.blue),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 // FocusManager.instance.primaryFocus?.unfocus();
@@ -297,10 +301,10 @@ class _SignUpStepsState extends State<SignUpSteps> {
     if (stepHasError[_currentStep] == false && mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(
-            const SnackBar(
-              content: Text('Processing'),
+            SnackBar(
+              content: const Text('Processing'),
               backgroundColor: Colors.blue,
-              // onVisible: _tryRegistering,
+              onVisible: _tryRegistering,
             ),
           )
           .closed
@@ -448,7 +452,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
     }
   }
 
-  void _tryRegistering() {
+  Future<void> _tryRegistering() async {
     // sendData(urlPath: '/hadwin/v1/user/register', data: signUpDetails)
     //     .then((response) {
     //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -465,6 +469,18 @@ class _SignUpStepsState extends State<SignUpSteps> {
     //         (route) => false);
     //   }
     // });
+    User? user = await FireAuth.registerUsingEmailPassword(
+      email: signUpDetails['emailId'],
+      name: signUpDetails['fullname'],
+      password: signUpDetails['password'],
+    );
+    if (user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(user: user),
+        ),
+      );
+    }
   }
 
 //? FUNCTION TO CHANGE STEP ON TAPPING THE OVERHEAD STEP NUMBERS

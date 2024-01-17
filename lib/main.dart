@@ -5,11 +5,23 @@ import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/login_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+bool shouldUseFirestoreEmulator = false;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+  );
+  if (shouldUseFirestoreEmulator) {
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  }
+  
   runApp(const MyApp());
 }
 

@@ -1,11 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
   // final Function setTab;
   // final Map<String, dynamic> user;
+  final User user;
   const ProfileScreen({
     Key? key,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -13,8 +16,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<ProfileScreen> {
+  late User _currentUser;
   @override
   void initState() {
+    _currentUser = widget.user;
     super.initState();
   }
 
@@ -66,10 +71,10 @@ class _WalletScreenState extends State<ProfileScreen> {
       ],
     );
     //? STORES INFORMATION ABOUT THE USER
-    Widget userInfo = const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 28),
+    Widget userInfo = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(children: [
-        Row(
+        const Row(
           children: [
             Text("Personal Info", style: TextStyle(color: Color(0xff929BAB)))
           ],
@@ -77,17 +82,17 @@ class _WalletScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Name",
-              style: TextStyle(color: Color(0xff243656), fontSize: 15),
+            const Text(
+              'NAME',
+              style: const TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                'Michael Getu',
-                style: TextStyle(
+                '${_currentUser.displayName}',
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
                     fontSize: 15),
@@ -98,20 +103,21 @@ class _WalletScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "E-mail",
               style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                'test@test.com',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff243656),
-                    fontSize: 15),
+                '  ${_currentUser.email}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff243656),
+                  fontSize: 15,
+                ),
               ),
             )
           ],
