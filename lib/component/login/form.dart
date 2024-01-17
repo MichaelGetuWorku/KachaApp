@@ -35,25 +35,26 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  const BoxShadow(
+              color: Colors.white,
+              border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                const BoxShadow(
+                  blurRadius: 6.18,
+                  spreadRadius: 0.618,
+                  offset: Offset(-4, -4),
+                  // color: Colors.white38
+                  color: Color(0xFFF5F7FA),
+                ),
+                BoxShadow(
                     blurRadius: 6.18,
                     spreadRadius: 0.618,
-                    offset: Offset(-4, -4),
-                    // color: Colors.white38
-                    color: Color(0xFFF5F7FA),
-                  ),
-                  BoxShadow(
-                      blurRadius: 6.18,
-                      spreadRadius: 0.618,
-                      offset: const Offset(4, 4),
-                      color: Colors.blueGrey.shade100
-                      // color: Color(0xFFF5F7FA)
-                      )
-                ]),
+                    offset: const Offset(4, 4),
+                    color: Colors.blueGrey.shade100
+                    // color: Color(0xFFF5F7FA)
+                    )
+              ],
+            ),
             child: TextFormField(
               textInputAction: TextInputAction.next,
               validator: (value) {
@@ -205,11 +206,13 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
           ),
         );
       } else {
-        // _formKey.currentState!.reset();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            // onVisible: tryLoggingIn,
-            content: Text('Processing...'),
-            backgroundColor: Colors.blue));
+        _formKey.currentState!.reset();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              // onVisible: tryLoggingIn,
+              content: Text('Processing...'),
+              backgroundColor: Colors.blue),
+        );
       }
     }
   }
