@@ -7,6 +7,7 @@ import 'package:kacha/component/sign_up_screen/step_get_bank_account.dart';
 import 'package:kacha/component/sign_up_screen/step_get_email_password.dart';
 import 'package:kacha/component/sign_up_screen/step_get_name_address.dart';
 import 'package:kacha/screens/profile_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpSteps extends StatefulWidget {
   const SignUpSteps({Key? key}) : super(key: key);
@@ -301,10 +302,10 @@ class _SignUpStepsState extends State<SignUpSteps> {
     if (stepHasError[_currentStep] == false && mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(
-            SnackBar(
-              content: const Text('Processing'),
+           const SnackBar(
+              content:  Text('Processing'),
               backgroundColor: Colors.blue,
-              onVisible: _tryRegistering,
+              // onVisible: _tryRegistering,
             ),
           )
           .closed
@@ -474,6 +475,13 @@ class _SignUpStepsState extends State<SignUpSteps> {
       name: signUpDetails['fullname'],
       password: signUpDetails['password'],
     );
+      // Create a record for the user in Firestore
+    await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+      'email': signUpDetails['emailId'],
+      'name': signUpDetails['fullname'],
+      'balance':10000,
+      // Add other user data fields as needed
+    });
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

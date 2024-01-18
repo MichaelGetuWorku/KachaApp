@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/component/login/form.dart';
+import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 import 'package:kacha/screens/sign_up_screen.dart';
 
@@ -20,11 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => ProfileScreen(
-            user: user,
-          ),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeDashboardScreen()),
       );
     }
 
@@ -34,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _initializeFirebase();
+    // _initializeFirebase();
     super.initState();
   }
 

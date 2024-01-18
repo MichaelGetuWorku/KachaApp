@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/auth/fire_auth.dart';
+import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 
 class LoginFormComponent extends StatefulWidget {
@@ -37,7 +38,7 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
       if (user != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => ProfileScreen(user: user),
+            builder: (context) => const HomeDashboardScreen(),
           ),
         );
       }

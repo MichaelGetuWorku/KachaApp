@@ -37,9 +37,7 @@ class FireAuth {
   }) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
-    print('++++++++++++++++');
-    print(email);
-    print('++++++++++++++++');
+   
 
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
@@ -47,18 +45,12 @@ class FireAuth {
         password: password,
       );
       user = userCredential.user;
-      print('++++++++++++++++');
-      print(user);
-      print('++++++++++++++++');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('++++++++++++++++');
         print('No user found for that email.');
-        print('++++++++++++++++');
+       
       } else if (e.code == 'wrong-password') {
-        print('++++++++++++++++');
         print('Wrong password provided.');
-        print('++++++++++++++++');
       }
     }
 
