@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,27 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
   List<dynamic> allTransactions = [];
   late List<Map<String, dynamic>> response;
   Map<String, dynamic>? error = null;
+  late User _user;
+  int balance = 0;
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> fetchUserData() async {
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(_user.uid).get();
+    Map<String, dynamic>? userData =
+        userSnapshot.data() as Map<String, dynamic>?;
+    // Update the user data directly
+    setState(() {
+      balance = userData?['balance'] ?? 0;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    getTransactionsFromApi();
+    _user = FirebaseAuth.instance.currentUser!;
+    fetchUserData();
   }
 
   @override
@@ -104,7 +121,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 height: 20,
               ),
               Text(
-                "\$ 1000",
+                "\$ $balance",
                 style: TextStyle(
                     color: Colors.white.withOpacity(0.96),
                     fontSize: 36,
@@ -489,33 +506,6 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
         transaction['dateGroup'] = dateResponse;
       }
     });
-  }
-
-  void getTransactionsFromApi() async {
-    //   response = await Future.wait([
-    //     getData(
-    //         urlPath: "/hadwin/v1/all-transactions", authKey: widget.userAuthKey!),
-    //     SuccessfulTransactionsStorage().getSuccessfulTransactions()
-    //   ]);
-
-    //   if (response[0].keys.join().toLowerCase().contains("error") ||
-    //       response[1].keys.join().toLowerCase().contains("error")) {
-    //     setState(() {
-    //       error = response[0].keys.join().toLowerCase().contains("error")
-    //           ? response[0]
-    //           : response[1];
-    //     });
-    //   } else {
-    //     if (mounted) {
-    //       setState(() {
-    //         allTransactions = [
-    //           ...response[0]['transactions'],
-    //           ...response[1]['transactions']
-    //         ];
-    //       });
-    //       _updateTransactions();
-    //     }
-    //   }
   }
 }
 
