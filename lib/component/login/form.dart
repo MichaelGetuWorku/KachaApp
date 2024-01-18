@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/auth/fire_auth.dart';
 import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class LoginFormComponent extends StatefulWidget {
   const LoginFormComponent({super.key});
@@ -36,6 +40,7 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
         context: context,
       );
       if (user != null) {
+        Provider.of<UserData>(context, listen: false).setUser(user);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const HomeDashboardScreen(),

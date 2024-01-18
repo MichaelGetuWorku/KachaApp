@@ -6,6 +6,8 @@ import 'package:kacha/screens/login_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 bool shouldUseFirestoreEmulator = false;
 
@@ -21,8 +23,13 @@ void main() async {
   if (shouldUseFirestoreEmulator) {
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   }
-  
-  runApp(const MyApp());
+
+  runApp(
+    ChangeNotifierProvider(
+      child: const MyApp(),
+      create: (context) => UserData(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

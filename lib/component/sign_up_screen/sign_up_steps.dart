@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/gestures.dart';
@@ -6,8 +8,11 @@ import 'package:kacha/auth/fire_auth.dart';
 import 'package:kacha/component/sign_up_screen/step_get_bank_account.dart';
 import 'package:kacha/component/sign_up_screen/step_get_email_password.dart';
 import 'package:kacha/component/sign_up_screen/step_get_name_address.dart';
+import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class SignUpSteps extends StatefulWidget {
   const SignUpSteps({Key? key}) : super(key: key);
@@ -302,8 +307,8 @@ class _SignUpStepsState extends State<SignUpSteps> {
     if (stepHasError[_currentStep] == false && mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(
-           const SnackBar(
-              content:  Text('Processing'),
+            const SnackBar(
+              content: Text('Processing'),
               backgroundColor: Colors.blue,
               // onVisible: _tryRegistering,
             ),
@@ -336,7 +341,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
     if (stepHasError[_currentStep] == false) {
       if (_currentStep < signUpStepContent.length - 1) {
         _signUpStepController.animateToPage(_currentStep + 1,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic);
 
         setState(() {
@@ -475,17 +480,18 @@ class _SignUpStepsState extends State<SignUpSteps> {
       name: signUpDetails['fullname'],
       password: signUpDetails['password'],
     );
-      // Create a record for the user in Firestore
+    // Create a record for the user in Firestore
     await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
       'email': signUpDetails['emailId'],
       'name': signUpDetails['fullname'],
-      'balance':10000,
+      'balance': 10000,
       // Add other user data fields as needed
     });
     if (user != null) {
+      Provider.of<UserData>(context, listen: false).setUser(user);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(user: user),
+          builder: (context) => const HomeDashboardScreen(),
         ),
       );
     }
@@ -497,7 +503,8 @@ class _SignUpStepsState extends State<SignUpSteps> {
 
     if (requestedIndex < _currentStep) {
       _signUpStepController.animateToPage(requestedIndex,
-          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOutCubic);
 
       _performErrorCheck(requestedIndex);
       setState(() {
@@ -510,7 +517,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
       if (!stepHasError.sublist(0, requestedIndex).contains(true)) {
         if (_currentStep < signUpStepContent.length - 1) {
           _signUpStepController.animateToPage(requestedIndex,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOutCubic);
 
           setState(() {
@@ -521,7 +528,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
         int stepWithError =
             stepHasError.sublist(0, requestedIndex).indexOf(true);
         _signUpStepController.animateToPage(stepWithError,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic);
 
         setState(() {

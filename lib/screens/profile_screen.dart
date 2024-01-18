@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   // final Function setTab;
   // final Map<String, dynamic> user;
-  final User user;
   const ProfileScreen({
     Key? key,
-    required this.user,
   }) : super(key: key);
 
   @override
@@ -16,15 +16,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<ProfileScreen> {
-  late User _currentUser;
   @override
   void initState() {
-    _currentUser = widget.user;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    User? user = Provider.of<UserData>(context).user;
     Widget walletScreenDashBoard = Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
@@ -84,14 +83,14 @@ class _WalletScreenState extends State<ProfileScreen> {
           children: [
             const Text(
               'NAME',
-              style: const TextStyle(color: Color(0xff243656), fontSize: 15),
+              style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
             const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                '${_currentUser.displayName}',
+                '${user!.displayName}',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
@@ -112,7 +111,7 @@ class _WalletScreenState extends State<ProfileScreen> {
             ),
             Flexible(
               child: Text(
-                '  ${_currentUser.email}',
+                '${user.email}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xff243656),
@@ -195,8 +194,9 @@ class _WalletScreenState extends State<ProfileScreen> {
         //  backgroundColor: Color(0xfffcfcfc),
         appBar: AppBar(
           leading: IconButton(
-              onPressed: goBackToLastTabScreen,
-              icon: const Icon(Icons.arrow_back)),
+            onPressed: goBackToLastTabScreen,
+            icon: const Icon(Icons.arrow_back),
+          ),
           title: const Text("My Wallet"),
           centerTitle: true,
           actions: [
@@ -347,6 +347,7 @@ class _WalletScreenState extends State<ProfileScreen> {
     //     Provider.of<TabNavigationProvider>(context, listen: false).lastTab;
     // Provider.of<TabNavigationProvider>(context, listen: false).removeLastTab();
     // widget.setTab(lastTab);
+    Navigator.of(context).pop();
   }
 
   void _deleteCardDialogBox(String cardNumber) {

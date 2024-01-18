@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/component/activities_screen/activities_loading.dart';
+import 'package:kacha/screens/profile_screen.dart';
+import 'package:kacha/state/user_state.dart';
 import 'package:kacha/utils/custom_date_grouping.dart';
 import 'package:kacha/utils/display_error_alert.dart';
+import 'package:provider/provider.dart';
 
 class HomeDashboardScreen extends StatefulWidget {
   // final Map<String, dynamic> user;
@@ -32,13 +36,15 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = Provider.of<UserData>(context).user;
+
     List<Widget> dashboardActions = [
       GestureDetector(
         onTap: goToWalletScreen,
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: CircleAvatar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.red,
             radius: 26,
             child: ClipOval(
                 // child: Image.network(
@@ -91,7 +97,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 height: 20,
               ),
               Text(
-                "Hello, Mike",
+                'Hello, ${user!.displayName}',
                 style: TextStyle(color: Colors.grey.shade300, fontSize: 17),
               ),
               const SizedBox(
@@ -461,6 +467,11 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
   void goToWalletScreen() {
     // widget.setTab(3);
     // Provider.of<TabNavigationProvider>(context, listen: false).updateTabs(0);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProfileScreen(),
+      ),
+    );
   }
 
   void _viewAllActivities() {
