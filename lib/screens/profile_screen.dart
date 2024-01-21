@@ -1,5 +1,12 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/screens/login_screen.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   // final Function setTab;
@@ -13,9 +20,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<ProfileScreen> {
+  String name = '';
+  String email = '';
+  String phoneNumber = '';
+  late User _user;
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> fetchUserData() async {
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(_user.uid).get();
+    Map<String, dynamic>? userData =
+        userSnapshot.data() as Map<String, dynamic>?;
+    // Update the user data directly
+    setState(() {
+      email = userData?['email'] ?? '';
+      name = userData?['name'] ?? '';
+      phoneNumber = userData?['phoneNumber'] ?? '';
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
+
+    fetchUserData();
   }
 
   @override
@@ -27,7 +57,7 @@ class _WalletScreenState extends State<ProfileScreen> {
         Container(
           height: 224, width: double.infinity,
           //  color: Color(0xFF0070BA)
-          color: const Color(0xff1546A0),
+          color: Colors.orange,
         ),
         SizedBox(
           height: 224,
@@ -49,27 +79,25 @@ class _WalletScreenState extends State<ProfileScreen> {
           ),
         ),
         const Positioned(
-            // top: 128,
-            bottom: -60,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 64,
-              child: ClipOval(
-                  // child: Image.network(
-                  //   "${ApiConstants.baseUrl}/dist/images/hadwin_images/hadwin_users/${widget.user['gender'].toLowerCase()}/${widget.user['avatar']}",
-                  //   height: 120,
-                  //   width: 120,
-                  //   fit: BoxFit.cover,
-                  // ),
-                  ),
-            ))
+          // top: 128,
+          bottom: -60,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 64,
+            child: Icon(
+              Icons.person,
+              size: 120,
+              color: Colors.black,
+            ),
+          ),
+        ),
       ],
     );
     //? STORES INFORMATION ABOUT THE USER
-    Widget userInfo = const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 28),
+    Widget userInfo = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(children: [
-        Row(
+        const Row(
           children: [
             Text("Personal Info", style: TextStyle(color: Color(0xff929BAB)))
           ],
@@ -77,17 +105,17 @@ class _WalletScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Name",
+            const Text(
+              'NAME',
               style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                'Michael Getu',
-                style: TextStyle(
+                name,
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
                     fontSize: 15),
@@ -98,20 +126,21 @@ class _WalletScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "E-mail",
               style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                'test@test.com',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff243656),
-                    fontSize: 15),
+                email,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff243656),
+                  fontSize: 15,
+                ),
               ),
             )
           ],
@@ -119,17 +148,17 @@ class _WalletScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Phone",
               style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                '+251940-082280',
-                style: TextStyle(
+                '+251-$phoneNumber',
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
                     fontSize: 15),
@@ -142,14 +171,15 @@ class _WalletScreenState extends State<ProfileScreen> {
 
     Widget myBankingCards = Expanded(
       child: Container(
-        height: 100,
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        color: Colors.red,
-        // child: FutureBuilder<Map<String, dynamic>>(
-        //   future: availableCards.readAvailableCards(),
-        //   builder: _buildAvailableCards,
-        // ),
-      ),
+          height: 100,
+          padding: const EdgeInsets.symmetric(
+            // horizontal: 18,
+            vertical: 10,
+          ),
+          color: const Color.fromARGB(255, 220, 219, 219),
+          child: Builder(
+            builder: _buildAvailableCards,
+          )),
     );
 
     Widget walletScreenContents = Column(
@@ -162,21 +192,14 @@ class _WalletScreenState extends State<ProfileScreen> {
         const SizedBox(
           height: 20,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 10),
           child: Row(
             children: [
-              const Text(
-                "My Cards",
+              Text(
+                "Recent Transactions",
                 style: TextStyle(color: Color(0xff929BAB)),
               ),
-              const Spacer(),
-              InkWell(
-                  onTap: goToAddCardScreen,
-                  child: const Text(
-                    "+ Add",
-                    style: TextStyle(color: Color(0xff929BAB)),
-                  ))
             ],
           ),
         ),
@@ -189,31 +212,37 @@ class _WalletScreenState extends State<ProfileScreen> {
         //  backgroundColor: Color(0xfffcfcfc),
         appBar: AppBar(
           leading: IconButton(
-              onPressed: goBackToLastTabScreen,
-              icon: const Icon(Icons.arrow_back)),
-          title: const Text("My Wallet"),
+            onPressed: goBackToLastTabScreen,
+            icon: const Icon(
+              Icons.arrow_back,
+            ),
+          ),
+          title: const Text(
+            "My Wallet",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: true,
-          actions: [
-            Builder(
-                builder: (context) => IconButton(
-                    onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   SlideRightRoute(
-                      //     page: NewSettingsScreen(),
-                      //   ),
-                      // ).then(
-                      //   (value) => setState(
-                      //     () {},
-                      //   ),
-                      // );
-                    },
-                    icon: const Icon(FluentIcons.settings_28_regular)))
-          ],
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         extendBodyBehindAppBar: true,
+        floatingActionButton: FloatingActionButton.small(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          },
+          child: const Icon(
+            Icons.logout,
+          ),
+        ),
         body: CustomScrollView(slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
@@ -229,83 +258,109 @@ class _WalletScreenState extends State<ProfileScreen> {
     // });
   }
 
-  Widget _buildAvailableCards(
-      BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-    List<dynamic> cardData = [];
-    if (snapshot.hasData) {
-      cardData = snapshot.data!['availableCards'];
+  Widget _buildAvailableCards(BuildContext context) {
+    String jsonContent = '''
+[
+    {
+    "id": 1,
+    "name": "Salary Deposit",
+    "date": "2022-12-12",
+    "type": "Credit"
+  },
+  {
+    "id": 2,
+    "name": "Grocery Shopping",
+    "date": "2023-01-01",
+    "type": "Debit"
+  },
+  {
+    "id": 3,
+    "name": "Online Purchase",
+    "date": "2023-02-15",
+    "type": "Debit"
+  },
+  {
+    "id": 4,
+    "name": "Bonus Received",
+    "date": "2023-03-05",
+    "type": "Credit"
+  }
+]
+''';
 
-      return ListView.separated(
+    List<Map<String, dynamic>> transactions =
+        List<Map<String, dynamic>>.from(json.decode(jsonContent));
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ListView.separated(
         padding: const EdgeInsets.all(0),
-        itemBuilder: (_, index) => Container(
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  /*
-                  color: Color(0xffF5F7FA),
-                  blurRadius: 4,
-                  offset: Offset(0.0, 3),
-                  spreadRadius: 0
-                  */
-                  color: const Color(0xff1546a0).withOpacity(0.1),
-                  blurRadius: 48,
-                  offset: const Offset(2, 8),
-                  spreadRadius: -16),
-            ],
-            color: Colors.white,
-          ),
-          child: ListTile(
-            onTap: () => _deleteCardDialogBox(cardData[index]['cardNumber']),
-            contentPadding:
-                const EdgeInsets.only(left: 12, top: 0, right: 0, bottom: 0),
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(6.18),
-              child: ColorFiltered(
-                colorFilter: const ColorFilter.mode(
-                  Color(0xff243656),
-                  BlendMode.color,
-                ),
-                child: ColorFiltered(
-                  colorFilter: const ColorFilter.mode(
-                    Colors.grey,
-                    BlendMode.saturation,
-                  ),
-                  child: Container(
-                    color: Colors.white,
-                    // child: Image.network(
-                    //   "${ApiConstants.baseUrl}/dist/images/hadwin_images/hadwin_payment_system/square_card_brands/${cardData[index]['cardBrand'].replaceAll(' ', '-').toLowerCase()}.png",
-                    //   width: 48,
-                    //   height: 48,
-                    // ),
-                  ),
-                ),
-              ),
-            ),
-            title: Text(
-              cardData[index]['cardBrand'],
-              style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff243656),
-                  fontSize: 16.5),
-            ),
-            subtitle: Text(
-              _formatCardNumber(cardData[index]['cardNumber']),
-              style: const TextStyle(fontSize: 13, color: Color(0xff929BAB)),
-            ),
-          ),
-        ),
         separatorBuilder: (_, b) => const Divider(
           height: 14,
           color: Colors.transparent,
         ),
-        itemCount: cardData.length,
-      );
-    } else {
-      // return availableCardsLoadingList(5);
-      return const Text('Hello, ');
-    }
+        itemCount: transactions.length,
+        itemBuilder: (BuildContext context, int index) {
+          var transaction = transactions[index];
+
+          return Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: const Color(0xff1546a0).withOpacity(0.1),
+                  blurRadius: 48,
+                  offset: const Offset(2, 8),
+                  spreadRadius: -16,
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.only(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                right: 6.18,
+              ),
+              leading: const CircleAvatar(
+                radius: 38,
+                backgroundColor: Color.fromARGB(255, 18, 44, 82),
+                child: Icon(
+                  Icons.monetization_on_outlined,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
+              title: Text(
+                transaction['name'],
+                style:
+                    const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                  transaction['date'],
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xff929BAB)),
+                ),
+              ),
+              trailing: Text(
+                transaction['type'],
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: transaction['type'] == 'Credit'
+                      ? const Color(0xff37d39b)
+                      : const Color(0xffe84545),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   //? FUNCTION FOR FORMATTING CARD NUMBER
@@ -341,6 +396,7 @@ class _WalletScreenState extends State<ProfileScreen> {
     //     Provider.of<TabNavigationProvider>(context, listen: false).lastTab;
     // Provider.of<TabNavigationProvider>(context, listen: false).removeLastTab();
     // widget.setTab(lastTab);
+    Navigator.of(context).pop();
   }
 
   void _deleteCardDialogBox(String cardNumber) {

@@ -1,9 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/auth/fire_auth.dart';
 import 'package:kacha/component/sign_up_screen/step_get_bank_account.dart';
 import 'package:kacha/component/sign_up_screen/step_get_email_password.dart';
 import 'package:kacha/component/sign_up_screen/step_get_name_address.dart';
+import 'package:kacha/screens/home_screen.dart';
+import 'package:kacha/screens/profile_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class SignUpSteps extends StatefulWidget {
   const SignUpSteps({Key? key}) : super(key: key);
@@ -167,7 +176,8 @@ class _SignUpStepsState extends State<SignUpSteps> {
                         ),
                         TextSpan(
                             text: 'End User License Agreement',
-                            style: const TextStyle(fontSize: 14, color: Colors.blue),
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.blue),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 // FocusManager.instance.primaryFocus?.unfocus();
@@ -208,7 +218,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
                     child: ElevatedButton(
                         onPressed: _finalStepProccessing,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: Colors.orange,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -216,7 +226,10 @@ class _SignUpStepsState extends State<SignUpSteps> {
                         child: const Text(
                           'Create Account',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         )),
                   )
                 : Row(
@@ -331,7 +344,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
     if (stepHasError[_currentStep] == false) {
       if (_currentStep < signUpStepContent.length - 1) {
         _signUpStepController.animateToPage(_currentStep + 1,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic);
 
         setState(() {
@@ -448,7 +461,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
     }
   }
 
-  void _tryRegistering() {
+  Future<void> _tryRegistering() async {
     // sendData(urlPath: '/hadwin/v1/user/register', data: signUpDetails)
     //     .then((response) {
     //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -465,6 +478,27 @@ class _SignUpStepsState extends State<SignUpSteps> {
     //         (route) => false);
     //   }
     // });
+    User? user = await FireAuth.registerUsingEmailPassword(
+        email: signUpDetails['emailId'],
+        name: signUpDetails['fullname'],
+        password: signUpDetails['password'],
+        phoneNumber: signUpDetails['bankAccount']);
+    // Create a record for the user in Firestore
+    await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+      'email': signUpDetails['emailId'],
+      'name': signUpDetails['fullname'],
+      'balance': 10000,
+      'phoneNumber': signUpDetails['bankAccount'],
+      // Add other user data fields as needed
+    });
+    if (user != null) {
+      Provider.of<UserData>(context, listen: false).setUser(user);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeDashboardScreen(),
+        ),
+      );
+    }
   }
 
 //? FUNCTION TO CHANGE STEP ON TAPPING THE OVERHEAD STEP NUMBERS
@@ -473,7 +507,8 @@ class _SignUpStepsState extends State<SignUpSteps> {
 
     if (requestedIndex < _currentStep) {
       _signUpStepController.animateToPage(requestedIndex,
-          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOutCubic);
 
       _performErrorCheck(requestedIndex);
       setState(() {
@@ -486,7 +521,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
       if (!stepHasError.sublist(0, requestedIndex).contains(true)) {
         if (_currentStep < signUpStepContent.length - 1) {
           _signUpStepController.animateToPage(requestedIndex,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOutCubic);
 
           setState(() {
@@ -497,7 +532,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
         int stepWithError =
             stepHasError.sublist(0, requestedIndex).indexOf(true);
         _signUpStepController.animateToPage(stepWithError,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic);
 
         setState(() {

@@ -22,8 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(
                   height: 30,
-                  child: Image.asset(
-                      'assets/images/hadwin_system/hadwin-logo-with-name.png'),
+                  child: Image.asset('assets/images/kacha.png'),
                 ),
                 const SizedBox(
                   height: 30,

@@ -1,4 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/auth/fire_auth.dart';
+import 'package:kacha/screens/home_screen.dart';
+import 'package:kacha/screens/profile_screen.dart';
+import 'package:kacha/state/user_state.dart';
+import 'package:provider/provider.dart';
 
 class LoginFormComponent extends StatefulWidget {
   const LoginFormComponent({super.key});
@@ -24,6 +32,24 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
     });
   }
 
+  void tryLoggingIn() async {
+    if (_formKey.currentState!.validate()) {
+      User? user = await FireAuth.signInUsingEmailPassword(
+        email: userInput,
+        password: password,
+        context: context,
+      );
+      if (user != null) {
+        Provider.of<UserData>(context, listen: false).setUser(user);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomeDashboardScreen(),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -35,25 +61,26 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  const BoxShadow(
+              color: Colors.white,
+              border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                const BoxShadow(
+                  blurRadius: 6.18,
+                  spreadRadius: 0.618,
+                  offset: Offset(-4, -4),
+                  // color: Colors.white38
+                  color: Color(0xFFF5F7FA),
+                ),
+                BoxShadow(
                     blurRadius: 6.18,
                     spreadRadius: 0.618,
-                    offset: Offset(-4, -4),
-                    // color: Colors.white38
-                    color: Color(0xFFF5F7FA),
-                  ),
-                  BoxShadow(
-                      blurRadius: 6.18,
-                      spreadRadius: 0.618,
-                      offset: const Offset(4, 4),
-                      color: Colors.blueGrey.shade100
-                      // color: Color(0xFFF5F7FA)
-                      )
-                ]),
+                    offset: const Offset(4, 4),
+                    color: Colors.blueGrey.shade100
+                    // color: Color(0xFFF5F7FA)
+                    )
+              ],
+            ),
             child: TextFormField(
               textInputAction: TextInputAction.next,
               validator: (value) {
@@ -179,14 +206,18 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
             child: ElevatedButton(
                 onPressed: _validateLoginDetails,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.orange,
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),
                 child: const Text(
                   'Log in',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 )),
           ),
         ],
@@ -206,10 +237,12 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
         );
       } else {
         // _formKey.currentState!.reset();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            // onVisible: tryLoggingIn,
-            content: Text('Processing...'),
-            backgroundColor: Colors.blue));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              onVisible: tryLoggingIn,
+              content: const Text('Processing...'),
+              backgroundColor: Colors.blue),
+        );
       }
     }
   }

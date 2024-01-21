@@ -48,6 +48,25 @@ class _StepGetBankAccountState extends State<StepGetBankAccount> {
           children: [
             Container(
               width: double.infinity,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border:
+                      Border.all(width: 1.0, color: const Color(0xFFF5F7FA)),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    const BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: Offset(-4, -4),
+                        color: Colors.white38),
+                    BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: const Offset(4, 4),
+                        color: Colors.blueGrey.shade100)
+                  ]),
               child: TextFormField(
                 initialValue: bankAccount,
                 onChanged: _toggleSignUpButtonVisibility,
@@ -59,7 +78,8 @@ class _StepGetBankAccountState extends State<StepGetBankAccount> {
                     widget.finalStepProccessing();
                   }
                 },
-                decoration: InputDecoration(
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
                   fillColor: Colors.white,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -68,38 +88,20 @@ class _StepGetBankAccountState extends State<StepGetBankAccount> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "bank account number",
+                  hintText: "Phone Number",
                   hintStyle: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 ),
-                style: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
               ),
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(-4, -4),
-                        color: Colors.white38),
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(4, 4),
-                        color: Colors.blueGrey.shade100)
-                  ]),
             ),
             if (bankAccountErrorMessage != '')
               Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
                 child: Text(
                   "\t\t\t\t$bankAccountErrorMessage",
-                  style: TextStyle(fontSize: 10, color: Colors.red),
+                  style: const TextStyle(fontSize: 10, color: Colors.red),
                 ),
-                margin: EdgeInsets.all(2),
-                padding: EdgeInsets.all(2),
               ),
           ],
         ));

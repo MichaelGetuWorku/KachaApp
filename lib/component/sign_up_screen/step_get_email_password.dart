@@ -53,13 +53,32 @@ class _StepGetEmailPasswordState extends State<StepGetEmailPassword> {
           children: [
             Container(
               width: double.infinity,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border:
+                      Border.all(width: 1.0, color: const Color(0xFFF5F7FA)),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    const BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: Offset(-4, -4),
+                        color: Colors.white38),
+                    BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: const Offset(4, 4),
+                        color: Colors.blueGrey.shade100)
+                  ]),
               child: TextFormField(
                 textInputAction: TextInputAction.next,
                 initialValue: emailId,
                 validator: _validateEmailId,
                 autofocus: mounted,
                 autocorrect: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   fillColor: Colors.white,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -68,20 +87,33 @@ class _StepGetEmailPasswordState extends State<StepGetEmailPassword> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "email address",
+                  hintText: "Email address",
                   hintStyle: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 ),
-                style: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 keyboardType: TextInputType.emailAddress,
               ),
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(5),
+            ),
+            if (emailIdErrorMessage != '')
+              Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
+                child: Text(
+                  "\t\t\t\t$emailIdErrorMessage",
+                  style: const TextStyle(fontSize: 10, color: Colors.red),
+                ),
+              ),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
+                  border:
+                      Border.all(width: 1.0, color: const Color(0xFFF5F7FA)),
                   borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
                   boxShadow: [
-                    BoxShadow(
+                    const BoxShadow(
                         blurRadius: 6.18,
                         spreadRadius: 0.618,
                         offset: Offset(-4, -4),
@@ -89,21 +121,9 @@ class _StepGetEmailPasswordState extends State<StepGetEmailPassword> {
                     BoxShadow(
                         blurRadius: 6.18,
                         spreadRadius: 0.618,
-                        offset: Offset(4, 4),
+                        offset: const Offset(4, 4),
                         color: Colors.blueGrey.shade100)
                   ]),
-            ),
-            if (emailIdErrorMessage != '')
-              Container(
-                child: Text(
-                  "\t\t\t\t$emailIdErrorMessage",
-                  style: TextStyle(fontSize: 10, color: Colors.red),
-                ),
-                margin: EdgeInsets.all(2),
-                padding: EdgeInsets.all(2),
-              ),
-            Container(
-              width: double.infinity,
               child: TextFormField(
                 initialValue: password,
                 validator: _validatePassword,
@@ -113,7 +133,7 @@ class _StepGetEmailPasswordState extends State<StepGetEmailPassword> {
                 enableSuggestions: false,
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) => widget.proceedToNextStep(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
@@ -121,37 +141,19 @@ class _StepGetEmailPasswordState extends State<StepGetEmailPassword> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "password",
+                  hintText: "Password",
                   hintStyle: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 ),
               ),
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(-4, -4),
-                        color: Colors.white38),
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(4, 4),
-                        color: Colors.blueGrey.shade100)
-                  ]),
             ),
             if (passwordErrorMessage != '')
               Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
                 child: Text(
                   "\t\t\t\t$passwordErrorMessage",
-                  style: TextStyle(fontSize: 10, color: Colors.red),
+                  style: const TextStyle(fontSize: 10, color: Colors.red),
                 ),
-                margin: EdgeInsets.all(2),
-                padding: EdgeInsets.all(2),
               ),
           ],
         ));
