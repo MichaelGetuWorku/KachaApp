@@ -61,16 +61,13 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: CircleAvatar(
-            backgroundColor: Colors.red,
+            backgroundColor: Color.fromARGB(255, 18, 44, 82),
             radius: 26,
-            child: ClipOval(
-                // child: Image.network(
-                //   "${ApiConstants.baseUrl}/dist/images/hadwin_images/hadwin_users/${widget.user['gender'].toLowerCase()}/${widget.user['avatar']}",
-                //   height: 48,
-                //   width: 48,
-                //   fit: BoxFit.cover,
-                // ),
-                ),
+            child: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 40,
+            ),
           ),
         ),
       )
@@ -105,14 +102,15 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                'assets/images/hadwin_system/hadwin-logo-lite.png',
-                height: 48,
-                width: 48,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+              //TODO: ADD the Kacha logo
+              // Image.asset(
+              //   'assets/images/hadwin_system/hadwin-logo-lite.png',
+              //   height: 48,
+              //   width: 48,
+              // ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
               Text(
                 'Hello, ${user!.displayName}',
                 style: TextStyle(color: Colors.grey.shade300, fontSize: 17),
@@ -164,12 +162,16 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   child: Icon(
                     Icons.file_upload_outlined,
                     size: 24,
+                    color: Colors.white,
                   ),
                 ),
                 Spacer(),
                 Text(
                   "Send Money",
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -210,33 +212,6 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
               )
             ])),
       ),
-      // PopupMenuButton<_ScanOptions>(
-      //   icon: const Icon(
-      //     FluentIcons.more_vertical_28_regular,
-      //     color: Colors.grey,
-      //   ),
-      //   offset: const Offset(119, -27),
-      //   onSelected: (value) {
-      //     if (value == _ScanOptions.ScanQRCode) {
-      //       // Navigator.push(
-      //       //         context, SlideRightRoute(page: QRCodeScannerScreen()))
-      //       //     .whenComplete(() => setState(() {}));
-      //     } else {
-      //       // Navigator.push(context, SlideRightRoute(page: MyQRCodeScreen()))
-      //       //     .whenComplete(() => setState(() {}));
-      //     }
-      //   },
-      //   itemBuilder: (context) => [
-      //     const PopupMenuItem(
-      //       value: _ScanOptions.ScanQRCode,
-      //       child: Text("Scan QR Code"),
-      //     ),
-      //     const PopupMenuItem(
-      //       value: _ScanOptions.MyQRCode,
-      //       child: Text("My QR Code"),
-      //     )
-      //   ],
-      // )
     ];
 
     List<Widget> homeScreenContents = <Widget>[
@@ -255,58 +230,62 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
         ),
       ),
       Expanded(
-          flex: 1,
-          child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              height: 150,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        const Text(
-                          "Activity",
-                          style:
-                              TextStyle(fontSize: 21, color: Color(0xff243656)),
-                        ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: _viewAllActivities,
-                          child: const Text("View all",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey)),
-                        )
-                      ],
+        flex: 1,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          height: 150,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    const Text(
+                      "Activity",
+                      style: TextStyle(fontSize: 21, color: Color(0xff243656)),
                     ),
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 145,
-                      child: Builder(builder: _buildTransactionActivities),
-                    ),
-                  )
-                ],
-              )))
+                    const Spacer(),
+                    InkWell(
+                      onTap: _viewAllActivities,
+                      child: const Text("View all",
+                          style: TextStyle(fontSize: 16, color: Colors.grey)),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 145,
+                  child: Builder(builder: _buildTransactionActivities),
+                ),
+              )
+            ],
+          ),
+        ),
+      )
     ];
 
     return Scaffold(
-        // backgroundColor: Color.fromARGB(255, 253, 253, 253),
-        backgroundColor: const Color(0xfffcfcfc),
-        appBar: AppBar(
-          actions: dashboardActions,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        extendBodyBehindAppBar: true,
-        body: CustomScrollView(slivers: [
+      // backgroundColor: Color.fromARGB(255, 253, 253, 253),
+      backgroundColor: const Color(0xfffcfcfc),
+      appBar: AppBar(
+        actions: dashboardActions,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
+      body: CustomScrollView(
+        slivers: [
           SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                children: homeScreenContents,
-              ))
-        ]));
+            hasScrollBody: false,
+            child: Column(
+              children: homeScreenContents,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   void _makeATransaction(String transactionType) {
@@ -319,166 +298,72 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   Widget _buildTransactionActivities(BuildContext context) {
-    if (error != null) {
-      WidgetsBinding.instance!
-          .addPostFrameCallback((_) => showErrorAlert(context, error!));
-
-      return activitiesLoadingList(10);
-    } else if (allTransactions.isEmpty) {
-      return activitiesLoadingList(4);
-    } else if (error == null) {
-      List<dynamic> currentTransactions =
-          List.from(allTransactions).sublist(0, 4);
-
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: ListView.separated(
-          padding: const EdgeInsets.all(0),
-          separatorBuilder: (_, b) => const Divider(
-            height: 14,
-            color: Colors.transparent,
-          ),
-          itemCount: currentTransactions.length,
-          itemBuilder: (BuildContext context, int index) {
-            // Widget transactionMemberImage = FutureBuilder<int>(
-            //   future: checkUrlValidity(
-            //       "${ApiConstants.baseUrl}/dist/images/hadwin_images/brands_and_businesses/${currentTransactions[index]['transactionMemberAvatar']}"),
-            //   builder: (context, snapshot) {
-            //     if (currentTransactions[index]
-            //             .containsKey('transactionMemberBusinessWebsite') &&
-            //         currentTransactions[index]
-            //             .containsKey('transactionMemberAvatar')) {
-            //       return ClipOval(
-            //         child: AspectRatio(
-            //           aspectRatio: 1.0 / 1.0,
-            //           child: ColorFiltered(
-            //             colorFilter: ColorFilter.mode(
-            //               Color(0xff243656),
-            //               BlendMode.color,
-            //             ),
-            //             child: ColorFiltered(
-            //               colorFilter: ColorFilter.mode(
-            //                 Colors.grey,
-            //                 BlendMode.saturation,
-            //               ),
-            //               child: Image.network(
-            //                 "${ApiConstants.baseUrl}/dist/images/hadwin_images/brands_and_businesses/${currentTransactions[index]['transactionMemberAvatar']}",
-            //                 height: 72,
-            //                 width: 72,
-            //                 fit: BoxFit.contain,
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       );
-            //     } else if (currentTransactions[index]
-            //             .containsKey('transactionMemberEmail') &&
-            //         currentTransactions[index]
-            //             .containsKey('transactionMemberAvatar') &&
-            //         snapshot.hasData) {
-            //       if (snapshot.data == 404) {
-            //         return ClipOval(
-            //           child: AspectRatio(
-            //             aspectRatio: 1.0 / 1.0,
-            //             child: Image.network(
-            //               "${ApiConstants.baseUrl}/dist/images/hadwin_images/hadwin_users/${currentTransactions[index]['transactionMemberGender'].toLowerCase()}/${currentTransactions[index]['transactionMemberAvatar']}",
-            //               height: 72,
-            //               width: 72,
-            //               fit: BoxFit.contain,
-            //             ),
-            //           ),
-            //         );
-            //       } else {
-            //         return ClipOval(
-            //           child: AspectRatio(
-            //             aspectRatio: 1.0 / 1.0,
-            //             child: Image.network(
-            //               "${ApiConstants.baseUrl}/dist/images/hadwin_images/brands_and_businesses/${currentTransactions[index]['transactionMemberAvatar']}",
-            //               height: 72,
-            //               width: 72,
-            //               fit: BoxFit.contain,
-            //             ),
-            //           ),
-            //         );
-            //       }
-            //     } else {
-            //       return Text(
-            //         currentTransactions[index]['transactionMemberName'][0]
-            //             .toUpperCase(),
-            //         style: TextStyle(fontSize: 20, color: Color(0xff243656)),
-            //       );
-            //     }
-            //   },
-            // );
-
-            return Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      /*
-                    color: Color(0xffF5F7FA),
-                    blurRadius: 4,
-                    offset: Offset(0.0, 3),
-                    spreadRadius: 0
-                 */
-                      color: const Color(0xff1546a0).withOpacity(0.1),
-                      blurRadius: 48,
-                      offset: const Offset(2, 8),
-                      spreadRadius: -16),
-                ],
-                color: Colors.white,
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.only(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  right: 6.18,
-                ),
-                leading: const CircleAvatar(
-                  radius: 38,
-                  backgroundColor: Color(0xffF5F7FA),
-                  // child: transactionMemberImage,
-                ),
-                title: Text(
-                  currentTransactions[index]['transactionMemberName'],
-                  style:
-                      const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
-                    dateFormatter(
-                        currentTransactions[index]['dateGroup'],
-                        DateTime.parse(
-                            currentTransactions[index]['transactionDate'])),
-                    style:
-                        const TextStyle(fontSize: 12, color: Color(0xff929BAB)),
-                  ),
-                ),
-                trailing: Text(
-                  currentTransactions[index]['transactionType'] == "credit"
-                      ? "+ \$ ${currentTransactions[index]['transactionAmount'].toString()}"
-                      : "- \$ ${currentTransactions[index]['transactionAmount'].toString()}",
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: currentTransactions[index]['transactionType'] ==
-                              "credit"
-                          ? const Color(0xff37d39b)
-                          : const Color(0xfff47090)),
-                ),
-                onTap: _viewAllActivities,
-              ),
-            );
-          },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(0),
+        separatorBuilder: (_, b) => const Divider(
+          height: 14,
+          color: Colors.transparent,
         ),
-      );
-    } else {
-      return activitiesLoadingList(4);
-    }
+        itemCount: 10,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: const Color(0xff1546a0).withOpacity(0.1),
+                    blurRadius: 48,
+                    offset: const Offset(2, 8),
+                    spreadRadius: -16),
+              ],
+              color: Colors.white,
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.only(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                right: 6.18,
+              ),
+              leading: const CircleAvatar(
+                radius: 38,
+                backgroundColor: Color.fromARGB(255, 18, 44, 82),
+                child: Icon(
+                  Icons.monetization_on_outlined,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
+              // ignore: prefer_const_constructors
+              title: Text(
+                'Transaction Name',
+                style:
+                    const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
+              ),
+              subtitle: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                  '12/12/2022',
+                  style: TextStyle(fontSize: 12, color: Color(0xff929BAB)),
+                ),
+              ),
+              trailing: const Text(
+                "Credit",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff37d39b),
+                ),
+              ),
+              onTap: _viewAllActivities,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   void goToWalletScreen() {
