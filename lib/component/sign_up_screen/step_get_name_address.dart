@@ -50,12 +50,31 @@ class _StepGetNameAddressState extends State<StepGetNameAddress> {
           children: [
             Container(
               width: double.infinity,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border:
+                      Border.all(width: 1.0, color: const Color(0xFFF5F7FA)),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    const BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: Offset(-4, -4),
+                        color: Colors.white38),
+                    BoxShadow(
+                        blurRadius: 6.18,
+                        spreadRadius: 0.618,
+                        offset: const Offset(4, 4),
+                        color: Colors.blueGrey.shade100)
+                  ]),
               child: TextFormField(
                 initialValue: fullName,
                 validator: _validateName,
                 autofocus: mounted,
                 autocorrect: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   fillColor: Colors.white,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -64,21 +83,36 @@ class _StepGetNameAddressState extends State<StepGetNameAddress> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "full name",
+                  hintText: "Full name",
                   hintStyle: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 ),
-                style: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
               ),
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(5),
+            ),
+            if (fullNameErrorMessage != '')
+              Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
+                width: double.infinity,
+                child: Text(
+                  "\t\t\t\t$fullNameErrorMessage",
+                  style: const TextStyle(fontSize: 10, color: Colors.red),
+                ),
+              ),
+
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
+                  border:
+                      Border.all(width: 1.0, color: const Color(0xFFF5F7FA)),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
-                    BoxShadow(
+                    const BoxShadow(
                         blurRadius: 6.18,
                         spreadRadius: 0.618,
                         offset: Offset(-4, -4),
@@ -86,29 +120,15 @@ class _StepGetNameAddressState extends State<StepGetNameAddress> {
                     BoxShadow(
                         blurRadius: 6.18,
                         spreadRadius: 0.618,
-                        offset: Offset(4, 4),
+                        offset: const Offset(4, 4),
                         color: Colors.blueGrey.shade100)
                   ]),
-            ),
-            if (fullNameErrorMessage != '')
-              Container(
-                child: Text(
-                  "\t\t\t\t$fullNameErrorMessage",
-                  style: TextStyle(fontSize: 10, color: Colors.red),
-                ),
-                margin: EdgeInsets.all(2),
-                padding: EdgeInsets.all(2),
-                width: double.infinity,
-              ),
-
-            Container(
-              width: double.infinity,
               child: TextFormField(
                 initialValue: residentialAddress,
                 validator: _validateAddress,
                 autofocus: mounted,
                 autocorrect: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   fillColor: Colors.white,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -117,42 +137,24 @@ class _StepGetNameAddressState extends State<StepGetNameAddress> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "residential address",
+                  hintText: "Residential address",
                   hintStyle: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 ),
-                style: TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFF929BAB)),
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) => widget.proceedToNextStep(),
               ),
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 1.0, color: Color(0xFFF5F7FA)),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(-4, -4),
-                        color: Colors.white38),
-                    BoxShadow(
-                        blurRadius: 6.18,
-                        spreadRadius: 0.618,
-                        offset: Offset(4, 4),
-                        color: Colors.blueGrey.shade100)
-                  ]),
             ),
             if (residentialAddressErrorMessage != '')
               Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
+                width: double.infinity,
                 child: Text(
                   "\t\t\t\t$residentialAddressErrorMessage",
-                  style: TextStyle(fontSize: 10, color: Colors.red),
+                  style: const TextStyle(fontSize: 10, color: Colors.red),
                 ),
-                margin: EdgeInsets.all(2),
-                padding: EdgeInsets.all(2),
-                width: double.infinity,
               ),
             // input field for RESIDENTIAL-ADDRESS ends here
           ],

@@ -206,14 +206,18 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
             child: ElevatedButton(
                 onPressed: _validateLoginDetails,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.orange,
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),
                 child: const Text(
                   'Log in',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 )),
           ),
         ],

@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:kacha/screens/login_screen.dart';
 import 'package:kacha/state/user_state.dart';
 import 'package:provider/provider.dart';
 
@@ -16,14 +20,36 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<ProfileScreen> {
+  String name = '';
+  String email = '';
+  String phoneNumber = '';
+  late User _user;
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> fetchUserData() async {
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(_user.uid).get();
+    Map<String, dynamic>? userData =
+        userSnapshot.data() as Map<String, dynamic>?;
+    // Update the user data directly
+    setState(() {
+      email = userData?['email'] ?? '';
+      name = userData?['name'] ?? '';
+      phoneNumber = userData?['phoneNumber'] ?? '';
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
+
+    fetchUserData();
   }
 
   @override
   Widget build(BuildContext context) {
-    User? user = Provider.of<UserData>(context).user;
     Widget walletScreenDashBoard = Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
@@ -31,7 +57,7 @@ class _WalletScreenState extends State<ProfileScreen> {
         Container(
           height: 224, width: double.infinity,
           //  color: Color(0xFF0070BA)
-          color: const Color(0xff1546A0),
+          color: Colors.orange,
         ),
         SizedBox(
           height: 224,
@@ -88,7 +114,7 @@ class _WalletScreenState extends State<ProfileScreen> {
             ),
             Flexible(
               child: Text(
-                '${user!.displayName}',
+                name,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
@@ -109,7 +135,7 @@ class _WalletScreenState extends State<ProfileScreen> {
             ),
             Flexible(
               child: Text(
-                '${user.email}',
+                email,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xff243656),
@@ -119,20 +145,20 @@ class _WalletScreenState extends State<ProfileScreen> {
             )
           ],
         ),
-        const Row(
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Phone",
               style: TextStyle(color: Color(0xff243656), fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Flexible(
               child: Text(
-                '+251940-082280',
-                style: TextStyle(
+                '+251-$phoneNumber',
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff243656),
                     fontSize: 15),
@@ -187,7 +213,9 @@ class _WalletScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: goBackToLastTabScreen,
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(
+              Icons.arrow_back,
+            ),
           ),
           title: const Text(
             "My Wallet",
@@ -197,29 +225,24 @@ class _WalletScreenState extends State<ProfileScreen> {
             ),
           ),
           centerTitle: true,
-          actions: [
-            Builder(
-              builder: (context) => IconButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   SlideRightRoute(
-                  //     page: NewSettingsScreen(),
-                  //   ),
-                  // ).then(
-                  //   (value) => setState(
-                  //     () {},
-                  //   ),
-                  // );
-                },
-                icon: const Icon(FluentIcons.settings_28_regular),
-              ),
-            ),
-          ],
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         extendBodyBehindAppBar: true,
+        floatingActionButton: FloatingActionButton.small(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          },
+          child: const Icon(
+            Icons.logout,
+          ),
+        ),
         body: CustomScrollView(slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
@@ -236,6 +259,38 @@ class _WalletScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildAvailableCards(BuildContext context) {
+    String jsonContent = '''
+[
+    {
+    "id": 1,
+    "name": "Salary Deposit",
+    "date": "2022-12-12",
+    "type": "Credit"
+  },
+  {
+    "id": 2,
+    "name": "Grocery Shopping",
+    "date": "2023-01-01",
+    "type": "Debit"
+  },
+  {
+    "id": 3,
+    "name": "Online Purchase",
+    "date": "2023-02-15",
+    "type": "Debit"
+  },
+  {
+    "id": 4,
+    "name": "Bonus Received",
+    "date": "2023-03-05",
+    "type": "Credit"
+  }
+]
+''';
+
+    List<Map<String, dynamic>> transactions =
+        List<Map<String, dynamic>>.from(json.decode(jsonContent));
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView.separated(
@@ -244,29 +299,32 @@ class _WalletScreenState extends State<ProfileScreen> {
           height: 14,
           color: Colors.transparent,
         ),
-        itemCount: 10,
+        itemCount: transactions.length,
         itemBuilder: (BuildContext context, int index) {
+          var transaction = transactions[index];
+
           return Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: const Color(0xff1546a0).withOpacity(0.1),
-                    blurRadius: 48,
-                    offset: const Offset(2, 8),
-                    spreadRadius: -16),
+                  color: const Color(0xff1546a0).withOpacity(0.1),
+                  blurRadius: 48,
+                  offset: const Offset(2, 8),
+                  spreadRadius: -16,
+                ),
               ],
               color: Colors.white,
             ),
-            child: const ListTile(
-              contentPadding: EdgeInsets.only(
+            child: ListTile(
+              contentPadding: const EdgeInsets.only(
                 left: 0,
                 top: 0,
                 bottom: 0,
                 right: 6.18,
               ),
-              leading: CircleAvatar(
+              leading: const CircleAvatar(
                 radius: 38,
                 backgroundColor: Color.fromARGB(255, 18, 44, 82),
                 child: Icon(
@@ -275,24 +333,27 @@ class _WalletScreenState extends State<ProfileScreen> {
                   size: 40,
                 ),
               ),
-              // ignore: prefer_const_constructors
               title: Text(
-                'Transaction Name',
-                style: TextStyle(fontSize: 16.5, color: Color(0xff243656)),
+                transaction['name'],
+                style:
+                    const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
               ),
               subtitle: Padding(
-                padding: EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  '12/12/2022',
-                  style: TextStyle(fontSize: 12, color: Color(0xff929BAB)),
+                  transaction['date'],
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xff929BAB)),
                 ),
               ),
               trailing: Text(
-                "Credit",
+                transaction['type'],
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xff37d39b),
+                  color: transaction['type'] == 'Credit'
+                      ? const Color(0xff37d39b)
+                      : const Color(0xffe84545),
                 ),
               ),
             ),

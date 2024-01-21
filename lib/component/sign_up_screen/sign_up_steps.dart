@@ -218,7 +218,7 @@ class _SignUpStepsState extends State<SignUpSteps> {
                     child: ElevatedButton(
                         onPressed: _finalStepProccessing,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: Colors.orange,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -226,7 +226,10 @@ class _SignUpStepsState extends State<SignUpSteps> {
                         child: const Text(
                           'Create Account',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         )),
                   )
                 : Row(
@@ -476,15 +479,16 @@ class _SignUpStepsState extends State<SignUpSteps> {
     //   }
     // });
     User? user = await FireAuth.registerUsingEmailPassword(
-      email: signUpDetails['emailId'],
-      name: signUpDetails['fullname'],
-      password: signUpDetails['password'],
-    );
+        email: signUpDetails['emailId'],
+        name: signUpDetails['fullname'],
+        password: signUpDetails['password'],
+        phoneNumber: signUpDetails['bankAccount']);
     // Create a record for the user in Firestore
     await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
       'email': signUpDetails['emailId'],
       'name': signUpDetails['fullname'],
       'balance': 10000,
+      'phoneNumber': signUpDetails['bankAccount'],
       // Add other user data fields as needed
     });
     if (user != null) {

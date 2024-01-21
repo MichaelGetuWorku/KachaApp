@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: theme(),
       home: const LoginScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 

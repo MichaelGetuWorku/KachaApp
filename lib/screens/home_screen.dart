@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/component/activities_screen/activities_loading.dart';
+import 'package:kacha/screens/payment_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
+import 'package:kacha/screens/receipt_screen.dart';
 import 'package:kacha/state/user_state.dart';
 import 'package:kacha/utils/custom_date_grouping.dart';
 import 'package:kacha/utils/display_error_alert.dart';
@@ -30,6 +34,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
   Map<String, dynamic>? error = null;
   late User _user;
   int balance = 0;
+  String name = '';
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -41,6 +46,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     // Update the user data directly
     setState(() {
       balance = userData?['balance'] ?? 0;
+      name = userData?['name'] ?? '';
     });
   }
 
@@ -78,22 +84,23 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
           width: double.infinity,
           decoration: const BoxDecoration(
             // color: Color(0xFF0070BA),
-            color: Color(0xff1546A0),
+            color: Colors.orange,
             borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(36),
             ),
           )),
       Positioned(
-          left: -156,
-          top: -96,
-          child: Opacity(
-            opacity: 0.16,
-            child: Image.asset(
-              "assets/images/hadwin_system/magicpattern-blob-1652765120695.png",
-              color: Colors.white,
-              height: 480,
-            ),
-          )),
+        left: -156,
+        top: -96,
+        child: Opacity(
+          opacity: 0.16,
+          child: Image.asset(
+            "assets/images/hadwin_system/magicpattern-blob-1652765120695.png",
+            color: Colors.white,
+            height: 480,
+          ),
+        ),
+      ),
       Positioned(
         bottom: 20,
         left: 10,
@@ -102,18 +109,13 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //TODO: ADD the Kacha logo
-              // Image.asset(
-              //   'assets/images/hadwin_system/hadwin-logo-lite.png',
-              //   height: 48,
-              //   width: 48,
-              // ),
-              // const SizedBox(
-              //   height: 20,
-              // ),
               Text(
-                'Hello, ${user!.displayName}',
-                style: TextStyle(color: Colors.grey.shade300, fontSize: 17),
+                'Hello, $name',
+                style: const TextStyle(
+                  // color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -141,7 +143,15 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
       Padding(
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
-            onPressed: () => _makeATransaction('debit'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Pass the Send Money or Request Money var
+                  builder: (context) => const PaymentScreen(),
+                ),
+              );
+            },
             style: ElevatedButton.styleFrom(
               // primary: Color(0xFF0070BA),
               backgroundColor: const Color(0xff1546A0),
@@ -178,39 +188,6 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 )
               ],
             )),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: ElevatedButton(
-            onPressed: () => _makeATransaction('credit'),
-            style: ElevatedButton.styleFrom(
-              // fixedSize: Size(90, 100),
-              fixedSize: const Size(120, 108),
-              backgroundColor: Colors.white,
-              shadowColor: const Color(0xffF5F7FA).withOpacity(0.618),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Column(children: [
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                  alignment: Alignment.topLeft,
-                  child: Icon(
-                    Icons.file_download_outlined,
-                    size: 24,
-                    color: Color(0xFF0070BA),
-                  )),
-              Spacer(),
-              Text(
-                "Request Payment",
-                style: TextStyle(color: Color(0xFF0070BA), fontSize: 13),
-              ),
-              SizedBox(
-                height: 10,
-              )
-            ])),
       ),
     ];
 
@@ -288,16 +265,39 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     );
   }
 
-  void _makeATransaction(String transactionType) {
-    // Navigator.push(
-    //         context,
-    //         SlideRightRoute(
-    //             page: AvailableBusinessesAndContactsScreen(
-    //                 transactionType: transactionType)))
-    //     .then((value) => getTransactionsFromApi());
-  }
-
   Widget _buildTransactionActivities(BuildContext context) {
+    String jsonContent = '''
+[
+    {
+    "id": 1,
+    "name": "Salary Deposit",
+    "date": "2022-12-12",
+    "type": "Credit"
+  },
+  {
+    "id": 2,
+    "name": "Grocery Shopping",
+    "date": "2023-01-01",
+    "type": "Debit"
+  },
+  {
+    "id": 3,
+    "name": "Online Purchase",
+    "date": "2023-02-15",
+    "type": "Debit"
+  },
+  {
+    "id": 4,
+    "name": "Bonus Received",
+    "date": "2023-03-05",
+    "type": "Credit"
+  }
+]
+''';
+
+    List<Map<String, dynamic>> transactions =
+        List<Map<String, dynamic>>.from(json.decode(jsonContent));
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView.separated(
@@ -306,18 +306,21 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
           height: 14,
           color: Colors.transparent,
         ),
-        itemCount: 10,
+        itemCount: transactions.length,
         itemBuilder: (BuildContext context, int index) {
+          var transaction = transactions[index];
+
           return Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: const Color(0xff1546a0).withOpacity(0.1),
-                    blurRadius: 48,
-                    offset: const Offset(2, 8),
-                    spreadRadius: -16),
+                  color: const Color(0xff1546a0).withOpacity(0.1),
+                  blurRadius: 48,
+                  offset: const Offset(2, 8),
+                  spreadRadius: -16,
+                ),
               ],
               color: Colors.white,
             ),
@@ -337,25 +340,27 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   size: 40,
                 ),
               ),
-              // ignore: prefer_const_constructors
               title: Text(
-                'Transaction Name',
+                transaction['name'],
                 style:
                     const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
               ),
-              subtitle: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 5),
+              subtitle: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  '12/12/2022',
-                  style: TextStyle(fontSize: 12, color: Color(0xff929BAB)),
+                  transaction['date'],
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xff929BAB)),
                 ),
               ),
-              trailing: const Text(
-                "Credit",
+              trailing: Text(
+                transaction['type'],
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xff37d39b),
+                  color: transaction['type'] == 'Credit'
+                      ? const Color(0xff37d39b)
+                      : const Color(0xffe84545),
                 ),
               ),
               onTap: _viewAllActivities,

@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    // _initializeFirebase();
+    _initializeFirebase();
     super.initState();
   }
 
@@ -72,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Image.asset(
-            'assets/images/hadwin_system/hadwin-logo-with-name.png'),
+          'assets/images/kacha.png',
+          // scale: 1,
+        ),
       ),
       _spacing(64),
       const LoginFormComponent(),

@@ -6,6 +6,7 @@ class FireAuth {
     required String? name,
     required String? email,
     required String? password,
+    required String? phoneNumber,
   }) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
@@ -16,6 +17,7 @@ class FireAuth {
       );
       user = userCredential.user;
       await user!.updateDisplayName(name);
+      await user.updatePhoneNumber(phoneNumber as PhoneAuthCredential);
       await user.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
@@ -37,7 +39,6 @@ class FireAuth {
   }) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
-   
 
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
@@ -48,7 +49,6 @@ class FireAuth {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
-       
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided.');
       }
