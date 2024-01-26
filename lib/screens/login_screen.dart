@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/component/login/form.dart';
+import 'package:kacha/screens/forget_password.dart';
 import 'package:kacha/screens/home_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 import 'package:kacha/screens/sign_up_screen.dart';
@@ -37,6 +38,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget forgotPasswordContainer = SizedBox(
+      width: double.infinity,
+      height: 36,
+      child: Center(
+        child: InkWell(
+          onTap: getLoginHelp,
+          child: const Text(
+            'Forgot password in?',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.redAccent,
+            ),
+          ),
+        ),
+      ),
+    );
     Widget helpInfoContainer = SizedBox(
       width: double.infinity,
       height: 36,
@@ -78,6 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       _spacing(64),
       const LoginFormComponent(),
+      // _spacing(30),
+      forgotPasswordContainer,
       _spacing(30),
       helpInfoContainer,
       _spacing(10),
@@ -94,15 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void getLoginHelp() {
-    // Navigator.push(
-    //   context,
-    //   SlideRightRoute(
-    //     page: HadWinMarkdownViewer(
-    //         screenName: 'Login Help',
-    //         urlRequested:
-    //             'https://raw.githubusercontent.com/brownboycodes/HADWIN/master/docs/HADWIN_WIKI.md'),
-    //   ),
-    // );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ForgetPasswordScreen(),
+      ),
+    );
   }
 
   void goToSignUpScreen() {

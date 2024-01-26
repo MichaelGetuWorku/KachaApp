@@ -216,18 +216,13 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 width: double.infinity,
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text(
+                    Text(
                       "Activity",
                       style: TextStyle(fontSize: 21, color: Color(0xff243656)),
                     ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: _viewAllActivities,
-                      child: const Text("View all",
-                          style: TextStyle(fontSize: 16, color: Colors.grey)),
-                    )
+                    Spacer(),
                   ],
                 ),
               ),
@@ -272,25 +267,64 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     "id": 1,
     "name": "Salary Deposit",
     "date": "2022-12-12",
-    "type": "Credit"
+    "type": "Credit",
+    "amount": "1000"
   },
   {
     "id": 2,
     "name": "Grocery Shopping",
     "date": "2023-01-01",
-    "type": "Debit"
+    "type": "Debit",
+    "amount": "100"
+
   },
   {
     "id": 3,
     "name": "Online Purchase",
     "date": "2023-02-15",
-    "type": "Debit"
+    "type": "Debit",
+        "amount": "70"
+
   },
   {
     "id": 4,
     "name": "Bonus Received",
     "date": "2023-03-05",
-    "type": "Credit"
+    "type": "Credit",
+        "amount": "10"
+
+  },
+   {
+    "id": 6,
+    "name": "ATM Withdrawal",
+    "date": "2022-12-12",
+    "type": "Debit",
+        "amount": "500"
+
+  },
+  {
+    "id": 7,
+    "name": "Gas Payment",
+    "date": "2023-01-01",
+    "type": "Debit",
+        "amount": "7000"
+
+  },
+  {
+    "id": 8,
+    "name": "DSTV",
+    "date": "2023-02-15",
+    "type": "Debit",
+        "amount": "900"
+
+  },
+  {
+    "id": 9,
+    "name": "Gift Package",
+    "date": "2023-03-05",
+    "type": "Credit",
+        "amount": "800"
+
   }
 ]
 ''';
@@ -363,7 +397,11 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                       : const Color(0xffe84545),
                 ),
               ),
-              onTap: _viewAllActivities,
+              onTap: () => _viewAllActivities(
+                transaction['amount'],
+                transaction['name'],
+                transaction['type'],
+              ),
             ),
           );
         },
@@ -381,22 +419,19 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     );
   }
 
-  void _viewAllActivities() {
+  void _viewAllActivities(
+    String amount,
+    String number,
+    String type,
+  ) {
     // Provider.of<TabNavigationProvider>(context, listen: false).updateTabs(0);
     // widget.setTab(2);
-  }
-
-  void _updateTransactions() {
-    setState(() {
-      allTransactions
-          .sort((a, b) => b['transactionDate'].compareTo(a['transactionDate']));
-      for (var transaction in allTransactions) {
-        String dateResponse =
-            customGroup(DateTime.parse(transaction['transactionDate']));
-        transaction['dateGroup'] = dateResponse;
-      }
-    });
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => TransactionReceiptScreen(
+        amount: amount,
+        phoneNumber: number,
+        type: type,
+      ),
+    ));
   }
 }
-
-enum _ScanOptions { ScanQRCode, MyQRCode }
