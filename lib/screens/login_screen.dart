@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const Text(
             'Sign up',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               color: Color(0xFF929BAB),
             ),
           ),
@@ -96,8 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
       const LoginFormComponent(),
       // _spacing(30),
       forgotPasswordContainer,
-      _spacing(30),
-      helpInfoContainer,
+
       _spacing(10),
       signUpContainer
     ];

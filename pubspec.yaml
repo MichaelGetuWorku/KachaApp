@@ -72,11 +72,6 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
-    - assets/images/hadwin_system/
-    - assets/images/notification_assets/
-    - assets/images/card_flow_assets/
-    - assets/images/onboarding_assets/
-    - assets/images/transparent_card_brands/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

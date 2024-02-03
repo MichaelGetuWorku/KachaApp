@@ -98,7 +98,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
         child: Opacity(
           opacity: 0.16,
           child: Image.asset(
-            "assets/images/hadwin_system/magicpattern-blob-1652765120695.png",
+            "assets/images/blob.png",
             color: Colors.white,
             height: 480,
           ),
