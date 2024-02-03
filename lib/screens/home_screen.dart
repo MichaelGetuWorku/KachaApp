@@ -5,23 +5,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/component/activities_screen/activities_loading.dart';
+import 'package:kacha/screens/over_due_payment_screen.dart';
 import 'package:kacha/screens/payment_screen.dart';
 import 'package:kacha/screens/profile_screen.dart';
 import 'package:kacha/screens/receipt_screen.dart';
+import 'package:kacha/screens/utility_pay_screen.dart';
 import 'package:kacha/state/user_state.dart';
 import 'package:kacha/utils/custom_date_grouping.dart';
 import 'package:kacha/utils/display_error_alert.dart';
 import 'package:provider/provider.dart';
 
 class HomeDashboardScreen extends StatefulWidget {
-  // final Map<String, dynamic> user;
-  // final String? userAuthKey;
-  // final Function setTab;
   const HomeDashboardScreen({
     Key? key,
-    // required this.user,
-    // required this.userAuthKey,
-    // required this.setTab,
   }) : super(key: key);
 
   @override
@@ -35,6 +31,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
   late User _user;
   int balance = 0;
   String name = '';
+  List overduePayments = [];
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -47,14 +44,20 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     setState(() {
       balance = userData?['balance'] ?? 0;
       name = userData?['name'] ?? '';
+      overduePayments = userData?['overduePayments'];
     });
+    print('Over Due payments 1: ${userData?['overduePayments']}');
   }
+  Future<void> _refreshData() async {
+    fetchUserData();
+  }
+
 
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser!;
-    fetchUserData();
+      fetchUserData();
   }
 
   @override
@@ -189,6 +192,55 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
               ],
             )),
       ),
+      Padding(
+        padding: const EdgeInsets.all(10),
+        child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Pass the Send Money or Request Money var
+                  builder: (context) => const UtilityPayScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              // primary: Color(0xFF0070BA),
+              backgroundColor: const Color(0xff1546A0),
+              // fixedSize: Size(90, 100),
+              fixedSize: const Size(120, 108),
+              shadowColor: const Color(0xFF0070BA).withOpacity(0.618),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Icon(
+                    Icons.payment,
+                    size: 24,
+                    color: Colors.white,
+                  ),
+                ),
+                Spacer(),
+                Text(
+                  "Utility Payment",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                )
+              ],
+            )),
+      ),
     ];
 
     List<Widget> homeScreenContents = <Widget>[
@@ -216,18 +268,43 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 width: double.infinity,
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text(
+                    Text(
+                      "Over Due Payments",
+                      style: TextStyle(fontSize: 21, color: Color(0xff243656)),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 145,
+                  child: Builder(builder: _buildOverdueTransactionActivities),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      Expanded(
+        flex: 1,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          height: 150,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                width: double.infinity,
+                child: const Row(
+                  children: [
+                    Text(
                       "Activity",
                       style: TextStyle(fontSize: 21, color: Color(0xff243656)),
                     ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: _viewAllActivities,
-                      child: const Text("View all",
-                          style: TextStyle(fontSize: 16, color: Colors.grey)),
-                    )
+                    Spacer(),
                   ],
                 ),
               ),
@@ -240,7 +317,7 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
             ],
           ),
         ),
-      )
+      ),
     ];
 
     return Scaffold(
@@ -252,15 +329,18 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: homeScreenContents,
-            ),
-          )
-        ],
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                children: homeScreenContents,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -272,25 +352,64 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     "id": 1,
     "name": "Salary Deposit",
     "date": "2022-12-12",
-    "type": "Credit"
+    "type": "Credit",
+    "amount": "1000"
   },
   {
     "id": 2,
     "name": "Grocery Shopping",
     "date": "2023-01-01",
-    "type": "Debit"
+    "type": "Debit",
+    "amount": "100"
+
   },
   {
     "id": 3,
     "name": "Online Purchase",
     "date": "2023-02-15",
-    "type": "Debit"
+    "type": "Debit",
+        "amount": "70"
+
   },
   {
     "id": 4,
     "name": "Bonus Received",
     "date": "2023-03-05",
-    "type": "Credit"
+    "type": "Credit",
+        "amount": "10"
+
+  },
+   {
+    "id": 6,
+    "name": "ATM Withdrawal",
+    "date": "2022-12-12",
+    "type": "Debit",
+        "amount": "500"
+
+  },
+  {
+    "id": 7,
+    "name": "Gas Payment",
+    "date": "2023-01-01",
+    "type": "Debit",
+        "amount": "7000"
+
+  },
+  {
+    "id": 8,
+    "name": "DSTV",
+    "date": "2023-02-15",
+    "type": "Debit",
+        "amount": "900"
+
+  },
+  {
+    "id": 9,
+    "name": "Gift Package",
+    "date": "2023-03-05",
+    "type": "Credit",
+        "amount": "800"
+
   }
 ]
 ''';
@@ -363,8 +482,98 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
                       : const Color(0xffe84545),
                 ),
               ),
-              onTap: _viewAllActivities,
+              onTap: () => _viewAllActivities(
+                transaction['amount'],
+                transaction['name'],
+                transaction['type'],
+              ),
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildOverdueTransactionActivities(BuildContext context) {
+    List transactions = overduePayments;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(0),
+        separatorBuilder: (_, b) => const Divider(
+          height: 14,
+          color: Colors.transparent,
+        ),
+        itemCount: transactions.length,
+        itemBuilder: (BuildContext context, int index) {
+          var transaction = transactions[index];
+
+          return Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: const Color(0xff1546a0).withOpacity(0.1),
+                  blurRadius: 48,
+                  offset: const Offset(2, 8),
+                  spreadRadius: -16,
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: ListTile(
+                contentPadding: const EdgeInsets.only(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  right: 6.18,
+                ),
+                leading: const CircleAvatar(
+                  radius: 38,
+                  backgroundColor: Color.fromARGB(255, 18, 44, 82),
+                  child: Icon(
+                    Icons.monetization_on_outlined,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
+                title: Text(
+                  transaction['name'],
+                  style:
+                      const TextStyle(fontSize: 16.5, color: Color(0xff243656)),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    transaction['date'],
+                    style:
+                        const TextStyle(fontSize: 12, color: Color(0xff929BAB)),
+                  ),
+                ),
+                trailing: Text(
+                  transaction['overDue'] == true ? 'Not Payed' : 'Payed',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: transaction['overDue'] == true
+                        ?  const Color(0xffe84545)
+                        : const Color(0xff37d39b),
+                  ),
+                ),
+                onTap: () {
+                  transaction['overDue'] == true
+                      ? Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return OverDuePaymentScreen(
+                              billName: transaction['name'],
+                              amount: transaction['amount'],
+                            );
+                          },
+                        ))
+                      : null;
+                }),
           );
         },
       ),
@@ -381,22 +590,19 @@ class HomeDashboardScreenState extends State<HomeDashboardScreen> {
     );
   }
 
-  void _viewAllActivities() {
+  void _viewAllActivities(
+    String amount,
+    String number,
+    String type,
+  ) {
     // Provider.of<TabNavigationProvider>(context, listen: false).updateTabs(0);
     // widget.setTab(2);
-  }
-
-  void _updateTransactions() {
-    setState(() {
-      allTransactions
-          .sort((a, b) => b['transactionDate'].compareTo(a['transactionDate']));
-      for (var transaction in allTransactions) {
-        String dateResponse =
-            customGroup(DateTime.parse(transaction['transactionDate']));
-        transaction['dateGroup'] = dateResponse;
-      }
-    });
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => TransactionReceiptScreen(
+        amount: amount,
+        phoneNumber: number,
+        type: type,
+      ),
+    ));
   }
 }
-
-enum _ScanOptions { ScanQRCode, MyQRCode }

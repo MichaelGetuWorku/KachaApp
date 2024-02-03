@@ -16,9 +16,9 @@ class FireAuth {
         password: password!,
       );
       user = userCredential.user;
-      await user!.updateDisplayName(name);
-      await user.updatePhoneNumber(phoneNumber as PhoneAuthCredential);
-      await user.reload();
+      // await user!.updateDisplayName(name);
+      // await user.updatePhoneNumber(phoneNumber as PhoneAuthCredential);
+      // await user.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -55,5 +55,15 @@ class FireAuth {
     }
 
     return user;
+  }
+
+  static Future resetPassword({required String email}) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      print('Password reset email sent to $email');
+    } catch (e) {
+      print('Failed to send reset email: $e');
+    }
   }
 }

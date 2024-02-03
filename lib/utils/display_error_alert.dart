@@ -46,10 +46,10 @@ void showErrorAlert(BuildContext context, Map<String, dynamic> error) {
                   boxShadow: [
                     BoxShadow(
                         color: Colors.blueGrey.shade100,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                         blurRadius: 5.0)
                   ],
-                  gradient: RadialGradient(
+                  gradient: const RadialGradient(
                       colors: [Color(0xff0070BA), Color(0xff1546A0)],
                       radius: 8.4,
                       center: Alignment(-0.24, -0.36)),
@@ -57,13 +57,13 @@ void showErrorAlert(BuildContext context, Map<String, dynamic> error) {
                 ),
                 child: ElevatedButton(
                     onPressed: errorTypes[currentError].onClose,
-                    child: Text('OK'),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.transparent,
                       shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                    )),
+                    ),
+                    child: const Text('OK')),
               )
             ],
           ));
@@ -75,7 +75,7 @@ class _CommonError {
   _CommonError(this.context, this.error);
   List<Widget> get errorDescription => <Widget>[
         Padding(
-          padding: EdgeInsets.only(top: 24, bottom: 12),
+          padding: const EdgeInsets.only(top: 24, bottom: 12),
           child: Text(
             error[error.keys.first],
             textAlign: TextAlign.center,
@@ -97,10 +97,10 @@ class _LocalError {
         error.keys.first == 'internetConnectionError'
             ? ColorFiltered(
                 colorFilter:
-                    ColorFilter.mode(Color(0xFF0070BA), BlendMode.color),
+                    const ColorFilter.mode(Color(0xFF0070BA), BlendMode.color),
                 child: ColorFiltered(
                   colorFilter:
-                      ColorFilter.mode(Colors.grey, BlendMode.saturation),
+                      const ColorFilter.mode(Colors.grey, BlendMode.saturation),
                   child: Image.asset(
                     'assets/images/notification_assets/no-wifi.png',
                     height: 48,
@@ -113,7 +113,7 @@ class _LocalError {
                 width: 48,
               ),
         Padding(
-          padding: EdgeInsets.only(top: 24, bottom: 12),
+          padding: const EdgeInsets.only(top: 24, bottom: 12),
           child: Text(
             error[error.keys.first],
             textAlign: TextAlign.center,
@@ -132,7 +132,7 @@ class _HazardousError {
   _HazardousError(this.context, this.error);
   List<Widget> get errorDescription => <Widget>[
         Padding(
-          padding: EdgeInsets.only(top: 24, bottom: 12),
+          padding: const EdgeInsets.only(top: 24, bottom: 12),
           child: Text(
             error[error.keys.first],
             textAlign: TextAlign.center,
@@ -145,7 +145,7 @@ class _HazardousError {
     if (logOutStatus) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => const LoginScreen(),
           ),
           (route) => false);
     }

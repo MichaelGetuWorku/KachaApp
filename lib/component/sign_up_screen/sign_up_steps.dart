@@ -462,22 +462,6 @@ class _SignUpStepsState extends State<SignUpSteps> {
   }
 
   Future<void> _tryRegistering() async {
-    // sendData(urlPath: '/hadwin/v1/user/register', data: signUpDetails)
-    //     .then((response) {
-    //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    //   if (response.keys.join().toLowerCase().contains("error")) {
-    //     showErrorAlert(context, response);
-    //   } else {
-    //     Navigator.of(context).pushAndRemoveUntil(
-    //         MaterialPageRoute(
-    //             builder: (context) => ChooseUsername(
-    //                   userAuthKey: response['authorization_token'],
-    //                   userData: response['user'],
-    //                 )),
-    //         (route) => false);
-    //   }
-    // });
     User? user = await FireAuth.registerUsingEmailPassword(
         email: signUpDetails['emailId'],
         name: signUpDetails['fullname'],
@@ -489,7 +473,31 @@ class _SignUpStepsState extends State<SignUpSteps> {
       'name': signUpDetails['fullname'],
       'balance': 10000,
       'phoneNumber': signUpDetails['bankAccount'],
-      // Add other user data fields as needed
+      'overduePayments': [
+        {
+          'name': 'DSTV Payment',
+          'amount': 100,
+          'overDue':  true,
+          'date': '2024-02-03',
+        },
+        {
+          'name': 'Electric Bill',
+          'amount': 200,
+          'overDue':  true,
+          'date': '2024-02-04',
+        },
+        {
+          'name': 'Water Bill',
+          'amount': 100,
+          'overDue':  true,
+          'date': '2024-02-04',
+        }, {
+          'name': 'School Bill',
+          'amount': 200,
+          'overDue':  true,
+          'date': '2024-02-04',
+        },
+      ],
     });
     if (user != null) {
       Provider.of<UserData>(context, listen: false).setUser(user);
