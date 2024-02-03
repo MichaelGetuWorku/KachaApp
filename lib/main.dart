@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 bool shouldUseFirestoreEmulator = false;
 
 void main() async {
+  //? Firebase Setup
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -25,6 +26,7 @@ void main() async {
   }
 
   runApp(
+    //? Provider Setup
     ChangeNotifierProvider(
       child: const MyApp(),
       create: (context) => UserData(),

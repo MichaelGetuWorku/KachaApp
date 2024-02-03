@@ -1,14 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kacha/screens/receipt_screen.dart';
 
-class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+class OverDuePaymentScreen extends StatefulWidget {
+  final String billName;
+  final int amount;
+
+  const OverDuePaymentScreen({
+    super.key,
+    required this.billName,
+    required this.amount,
+  });
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  State<OverDuePaymentScreen> createState() => _OverDuePaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _OverDuePaymentScreenState extends State<OverDuePaymentScreen> {
+  late User _user;
+
   final _formKey = GlobalKey<FormState>();
   String errorMessage1 = "";
   String errorMessage2 = "";
@@ -26,6 +37,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void tryLoggingIn() async {
+    DocumentSnapshot userDocSnapshot =
+    await FirebaseFirestore.instance.collection('users').doc(_user.uid).get();
+
+    Map<String, dynamic> userData = userDocSnapshot.data() as Map<String, dynamic>;
+
+    List<dynamic> overduePayments = userData['overduePayments'];
+    int amount = widget.amount;
+
+    int paymentIndex =
+    overduePayments.indexWhere((payment) => payment['name'] == widget.billName);
+
+    if (paymentIndex != -1) {
+      overduePayments[paymentIndex]['overDue'] = false;
+
+      // Update the document with the modified 'overduePayments' array
+      await FirebaseFirestore.instance.collection('users').doc(_user.uid).update({
+        'overduePayments': overduePayments,
+        'balance':userData['balance'] - amount,
+      });
+    }
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => TransactionReceiptScreen(
@@ -34,6 +66,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       ),
     );
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
   }
 
   @override
@@ -100,6 +139,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     return null;
                   },
                   autocorrect: false,
+                  enabled: false,
+                  initialValue: widget.billName,
                   decoration: const InputDecoration(
                     fillColor: Colors.white,
                     border: InputBorder.none,
@@ -155,7 +196,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 child: TextFormField(
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (value) => _validateLoginDetails(),
-                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       errorMessageSetter(
@@ -172,6 +212,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   },
                   enableSuggestions: false,
                   autocorrect: false,
+                  enabled: false,
+                  initialValue: widget.amount.toString(),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -228,7 +270,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   child: const Text(
                     // TODO: Change it depending on the request
-                    'Send',
+                    'Pay',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

@@ -44,7 +44,6 @@ class _WalletScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser!;
-
     fetchUserData();
   }
 
@@ -230,9 +229,8 @@ class _WalletScreenState extends State<ProfileScreen> {
         ),
         extendBodyBehindAppBar: true,
         floatingActionButton: FloatingActionButton.small(
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => const LoginScreen(),
