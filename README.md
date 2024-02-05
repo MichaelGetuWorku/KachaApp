@@ -60,3 +60,7 @@ Product Design Document: Bill payment
    Logout:
    • Logout Confirmation
 
+# TODO:
+### 1: Loading state preferably shimmer loading style
+### 2: Profile picture upload
+### 3: Delete record
